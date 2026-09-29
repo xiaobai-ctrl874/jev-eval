@@ -4,7 +4,8 @@ import os, sys, json, time, requests
 FILES = sys.argv[1:] or ["test.jsonl","test2.jsonl","test3.jsonl","test4.jsonl","test5.jsonl","test6.jsonl"]
 KEEP = ["question_title","question_content","platform","question_id","contest_id","contest_date","starter_code","difficulty","metadata"]
 H = {"Authorization": f"Bearer {os.environ['HF_TOKEN']}"}
-out = open("/root/bench/jev_eval/raw/livecodebench/metadata_no_tests.jsonl", "a")
+# optional LCB_OUT env var: write to a separate file (used for test5/test6 newest-window fetch)
+out = open(os.environ.get("LCB_OUT", "/root/bench/jev_eval/raw/livecodebench/metadata_no_tests.jsonl"), "a")
 for fn in FILES:
     t=time.time(); n=0
     url = f"https://huggingface.co/datasets/livecodebench/code_generation_lite/resolve/main/{fn}"
