@@ -1,5 +1,4 @@
 {
-  "_note": "FROZEN 2026-09-29 as Jev Prompt V1. V1 = production prompt (autoroute.py DEFAULT_PREAMBLE/DEFAULT_QUESTIONS) plus the math option; only task_type.instructions, task_type.criteria.reasoning and task_type.criteria.math differ. Do not edit; changes go into a new version file.",
   "preamble": "Classify the user's current task in context along three dimensions:\n1. task_type — identify the primary kind of work required to complete the user's objective.\n2. execution_mode — identify whether the task can be completed directly or requires iterative interaction with tools or an external environment.\n3. capability_need — estimate the level of reasoning, coordination, scope, and long-horizon capability required to complete the task reliably.\nUse the conversation context provided in the state to understand the user's actual objective. Choose exactly one option for each dimension.",
   "questions": {
     "task_type": {
