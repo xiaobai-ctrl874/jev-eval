@@ -63,7 +63,17 @@ All counts below were verified locally from files downloaded from official huggi
 2. **Format**: loading-script dataset (`code_generation_lite.py`, `version_tag=` arg). Files: `test.jsonl` 1,252,609,773 B; `test2.jsonl` 713,377,060; `test3.jsonl` 623,360,766; `test4.jsonl` 1,204,644,685; `test5.jsonl` 557,699,297; `test6.jsonl` 134,303,240 → **total ≈ 4.49 GB**. Fields: `question_title, question_content, platform, question_id, contest_id, contest_date, starter_code, difficulty, public_test_cases, private_test_cases, metadata` (private_test_cases is the bulk of the size).
    Versions (script `ALLOWED_FILES`): release_v1=test; v2=+test2; v3=+test3; v4=+test4; v5=+test5; v6/release_latest=+test6. Also delta tags `v1..v6` (single file) and ranges like `v4_v5`.
    Official counts/date ranges (README/GitHub): v1 400 (May 2023–Mar 2024), v2 511 (–May 2024), v3 612 (–Jul 2024), v4 713 (–Sep 2024), v5 880 (–Jan 2025), v6 1055 (–Apr 2025; GitHub README only, HF card stops at v5).
-   LOCAL_COUNTS_PLACEHOLDER
+   Local verification (streamed, metadata only): `test.jsonl` = 400 rows (v1 ✓), contest_date 2023-05-07..2024-03-02, easy 142 / medium 168 / hard 90, atcoder 210 / leetcode 181 / codeforces 9. `test6.jsonl` = 175 rows (= 1055−880 ✓), contest_date 2025-01-04..2025-04-06, easy 43 / medium 52 / hard 80, atcoder 112 / leetcode 63. Stream completed: all 6 files → **1055 unique question_ids** in `raw/livecodebench/metadata_no_tests.jsonl` (≈ release_v6 ✓).
+   Per file (easy/medium/hard; atcoder/leetcode/codeforces; contest_date range):
+   - test (v1): 400 = 142/168/90; 210/181/9; 2023-05-07..2024-03-02
+   - test2 (v2 delta): 111 = 40/38/33; 57/54/0; 2024-03-09..2024-05-25
+   - test3 (v3 delta): 101 = 34/39/28; 53/48/0; 2024-06-01..2024-08-10
+   - test4 (v4 delta): 101 = 22/34/45; 65/36/0; 2023-08-26..2024-10-05 (min date predates v3 — some older problems added late)
+   - test5 (v5 delta): 167 = 41/52/74; 105/62/0; 2024-09-22..2025-01-04
+   - test6 (v6 delta): 175 = 43/52/80; 112/63/0; 2025-01-04..2025-04-06
+   - Total: easy 322 / medium 383 / hard 350.
+   Streaming took ~70 min total for ~4.5 GB of bandwidth (disk use: metadata file only).
+   `starter_code` is non-empty for 100% of LeetCode rows and 0% of AtCoder/Codeforces rows.
 3. **Native categories**: `platform` (leetcode/atcoder/codeforces); no topic labels. `starter_code` non-empty ≈ LeetCode function-signature style vs stdin/stdout style.
 4. **Difficulty**: `difficulty` ∈ {easy, medium, hard} (platform-derived). Not our capability_need.
 5. **Mode**: direct (single-shot generation; self-repair scenario is multi-turn but separate).
