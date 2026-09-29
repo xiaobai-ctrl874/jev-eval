@@ -1,0 +1,10 @@
+# downloaded benchmark data: re-creatable with scripts/
+raw/
+# secrets must never be committed
+*.env
+.env*
+*key*
+*token*
+!prompts/
+__pycache__/
+*.pyc

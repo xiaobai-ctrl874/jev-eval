@@ -1,0 +1,11 @@
+--- engy/gateway/autoroute.py.pre-v1-math.bak	2026-09-29 20:39:07.585713005 +0800
++++ engy/gateway/autoroute.py	2026-09-29 20:39:16.163420356 +0800
+@@ -100,7 +100,7 @@
+ POLICY_VERSION_DEFAULT = "auto-text-v1"
+ 
+ DIMENSIONS = ("task_type", "execution_mode", "capability_need")
+-TASK_TYPES = ("general_qa", "writing_language", "reasoning", "coding",
++TASK_TYPES = ("general_qa", "writing_language", "math", "reasoning", "coding",
+               "research_analysis", "planning_design", "workflow_operation")
+ EXECUTION_MODES = ("direct", "agentic")
+ CAPABILITY_NEEDS = ("standard", "strong", "frontier")

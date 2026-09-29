@@ -1,0 +1,34 @@
+{
+  "_note": "FROZEN 2026-09-29 as Jev Prompt V1. V1 = production prompt (autoroute.py DEFAULT_PREAMBLE/DEFAULT_QUESTIONS) plus the math option; only task_type.instructions, task_type.criteria.reasoning and task_type.criteria.math differ. Do not edit; changes go into a new version file.",
+  "preamble": "Classify the user's current task in context along three dimensions:\n1. task_type — identify the primary kind of work required to complete the user's objective.\n2. execution_mode — identify whether the task can be completed directly or requires iterative interaction with tools or an external environment.\n3. capability_need — estimate the level of reasoning, coordination, scope, and long-horizon capability required to complete the task reliably.\nUse the conversation context provided in the state to understand the user's actual objective. Choose exactly one option for each dimension.",
+  "questions": {
+    "task_type": {
+      "instructions": "task_type: the primary kind of work required to complete the user's objective. If several apply, choose the one that completes the user's main goal. If the core of the problem is mathematical (calculation, proof, or a problem in algebra, geometry, probability, number theory, combinatorics, calculus or similar), choose math rather than reasoning, even when the problem is stated as a puzzle or word problem.",
+      "criteria": {
+        "general_qa": "General questions, factual answers, explanations, conceptual teaching, ordinary conversation, information extraction, and other general knowledge-oriented requests.",
+        "writing_language": "Translation, rewriting, proofreading, summarization, drafting, copywriting, editing, style transformation, and other language-production tasks.",
+        "math": "Mathematical calculation, derivation or proof, and competition-style or textbook problems in algebra, geometry, probability, statistics, number theory, combinatorics, calculus and related fields, where the main challenge is the mathematics itself.",
+        "reasoning": "Non-mathematical logic, deduction, constraint solving, spatial reasoning, causal inference, analytical puzzles, and other tasks whose main challenge is reasoning through a problem to reach a correct conclusion. Problems whose core is mathematics belong to math.",
+        "coding": "Writing, debugging, reviewing, explaining, modifying, testing, or reasoning about software, algorithms, codebases, repositories, APIs, or other programming tasks.",
+        "research_analysis": "Investigating a topic, combining evidence from multiple sources, comparing substantial bodies of information, synthesizing findings, or producing research-style analysis.",
+        "planning_design": "Designing systems, architectures, technical solutions, strategies, plans, workflows, or other solutions involving interacting constraints and tradeoffs.",
+        "workflow_operation": "Executing or managing a concrete workflow involving external state, such as email, calendar, CRM, business records, tickets, accounts, or other operational systems."
+      }
+    },
+    "execution_mode": {
+      "instructions": "execution_mode: whether the task can be completed directly or requires iterative interaction with tools or an external environment.",
+      "criteria": {
+        "direct": "The task can primarily be completed by producing an answer or artifact from the available context without repeatedly observing and acting on an external environment.",
+        "agentic": "Successful completion depends on iterative cycles of action and observation, such as using tools, running shell commands, reading or modifying files, executing tests, interacting with APIs, browsers, applications, or other external state."
+      }
+    },
+    "capability_need": {
+      "instructions": "capability_need: the level of reasoning, coordination, scope, and long-horizon capability required to complete the task reliably.",
+      "criteria": {
+        "standard": "A well-scoped and relatively local task. The task has limited interacting dependencies, modest reasoning depth, clear requirements, and can usually be completed through a short or routine sequence of decisions.",
+        "strong": "A task requiring sustained reasoning or coordination across several dependent pieces of information. It may involve multiple steps, multiple files or components, moderate ambiguity, non-trivial debugging, substantial analysis, or a longer sequence of tool interactions.",
+        "frontier": "A long-horizon or highly interdependent task requiring global consistency across many decisions. It may involve a large codebase, many interacting modules or constraints, difficult architecture or planning, extensive iterative tool use, open-ended investigation, or situations where errors in intermediate decisions can compound across the rest of the task."
+      }
+    }
+  }
+}
