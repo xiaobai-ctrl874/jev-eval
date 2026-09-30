@@ -44,7 +44,7 @@
 | workflow_operation + agentic | DS 4.1、GLM-5.3、GLM-5.3-Flash（Kimi 可选） | 217,907（首条请求） |
 | coding + agentic | GLM-5.3、Kimi、DS 4.1、GLM-5.3-Flash | 217,907（首条请求）；运行中超限单独记录 |
 
-预期影响：计划中的 direct benchmark 单题一般只有几千 token，几乎不会被排除；DeepSWE 的首条请求也很短，但长轨迹会在运行中超限（按榜单逐轮数据推算，GLM-5.3-Flash 约 13%、DS 约 12%、GLM-5.3 约 4%），这部分必须按 `runtime_context_overflow` 单独报告。
+预期影响：计划中的 direct benchmark 单题一般只有几千 token，几乎不会被排除；DeepSWE 的首条请求也很短，但长轨迹可能在运行中超限（按榜单数据和旧上限的粗略推算只作风险提醒，不作预设结论），以实测的 `runtime_context_overflow` 单独报告。
 
 **扩样与停止（各 direct 组合通用）**：第一轮 20 题。若最便宜的候选与最高分之差的 95% 置信区间与"±1 分"区间有重叠，或差距在 5 分以内，则扩到 50 题；若差距超过 10 分且置信区间不跨 0，则停止。agentic 第一轮 10–15 题，差距接近时再扩。
 
