@@ -59,10 +59,12 @@ def view(prompt, arm):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument("--arm", choices=["B", "C"], required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument("--arm", choices=["A", "B", "C"], required=True)
+    ap.add_argument("--prompt", default=os.path.join(ROOT, "prompts", "jev_prompt_v2.json")); ap.add_argument("--out", default=None)
     a = ap.parse_args()
     key = open("/root/.jev_key").read().strip()
-    qdef = questions(*load_prompt(os.path.join(ROOT, "prompts", "jev_prompt_v2.json")))
+    qdef = questions(*load_prompt(a.prompt))
+    so = {json.loads(l)["id"]: json.loads(l)["state"] for l in open(os.path.join(ROOT, "STRUCTURED_OVERFLOW_INPUTS.jsonl"), encoding="utf-8")}
     sets = {json.loads(l)["id"]: json.loads(l) for l in open(os.path.join(ROOT, "STAGE1_CLASSIFICATION_SET.jsonl"), encoding="utf-8")}
     gold = {json.loads(l)["id"]: json.loads(l) for l in open(os.path.join(ROOT, "GOLD_V2.jsonl"), encoding="utf-8")}
     ids = [json.loads(l)["id"] for l in open(os.path.join(ROOT, "STRUCTURED_OVERFLOW_INPUTS.jsonl"), encoding="utf-8")]
@@ -70,8 +72,11 @@ def main():
 
     def one(i):
         s, g = sets[i], gold[i]
-        v = view(s["prompt"], a.arm)
-        st = {"messages": [{"role": "user", "content": v}]}
+        if a.arm == "A":
+            st = so[i]; v = st["messages"][0]["content"]
+        else:
+            v = view(s["prompt"], a.arm)
+            st = {"messages": [{"role": "user", "content": v}]}
         rec = {"id": i, "task_id": s["task_id"], "arm": a.arm, "gold_task_type": g["gold_task_type_v2"],
                "gold_execution_mode": g["gold_execution_mode_v2"], "official_difficulty": s["official_difficulty"],
                "original_input_tokens_est": tok(s["prompt"]), "routing_view_tokens_est": estimate_tokens(st, 1580),
@@ -95,7 +100,7 @@ def main():
 
     with cf.ThreadPoolExecutor(4) as ex:
         res = list(ex.map(one, ids))
-    out = os.path.join(ROOT, "stage1_5", f"routing_view_{a.arm}_results.jsonl")
+    out = a.out or os.path.join(ROOT, "stage1_5", f"routing_view_{a.arm}_results.jsonl")
     with open(out, "w", encoding="utf-8") as f:
         for r in res:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
