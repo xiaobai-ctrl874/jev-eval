@@ -63,7 +63,17 @@
 
 费用估算方法：按 Engy 当前单价，假设最高推理档每题输出约 2K（事实问答）到 10–15K（数学、编程）token，输入 2–5K token；agentic 按 9/27–28 的实测单题 token 量。实际以运行记录为准。
 
-## 3. 需要你先决定的评分问题
+## 3.0 已定的评分方案（2026-09-30 用户确认）
+
+| 项目 | 决定 |
+|---|---|
+| 9/23 实验结果 | 只作参考，不计入 Stage 2 结论 |
+| SimpleQA Verified 判卷 | OpenRouter `openai/gpt-4.1`（与官方 GPT-4.1 一致；OpenRouter 上具体快照日期未核实），官方判卷提示词 |
+| WritingBench、PlanningBench 判卷 | OpenRouter 上的 Claude。官方推荐的 Claude-3.7-Sonnet 已不在 OpenRouter 上，用最接近的 `anthropic/claude-sonnet-4`，报告中注明与官方的差异；所有候选同一判卷 |
+| research_analysis | 两者都用：LiveBench 数据分析（官方自动评分）+ TableBench 数据分析题（与参考答案比对，LLM 判卷，判卷模型同上） |
+| 判卷费用 | 单独记录（OpenRouter：GPT-4.1 输入 $2 / 输出 $8 每百万；Claude Sonnet 4 输入 $3 / 输出 $15 每百万） |
+
+## 3. 需要你先决定的评分问题（已由 3.0 回答，保留原文供对照）
 
 | 问题 | 选项 |
 |---|---|
