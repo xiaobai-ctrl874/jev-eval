@@ -15,6 +15,37 @@
 | 统计 | 候选之间做逐题配对：报告胜 / 负 / 平和配对 bootstrap 95% 置信区间；只差一两题时不下结论 |
 | 花费 | Engy 和 Jev 的花费全部记录进结果和报告 |
 
+## 1.1 两条实验线：Normal Context 与 Long Context（9/30 补充）
+
+详细规则见 `STAGE2_CONTEXT_POLICY.md`。要点：
+
+| 项目 | 规则 |
+|---|---|
+| 两条线分开统计 | Normal Context Benchmark 比较模型能力；Long Context Benchmark 单独做，两者的分数不混在一起 |
+| 调用前的容量检查 | 每题先估算输入 token，对每个候选判断 `capacity_eligible`：估算值 ≤ 该模型的 `capacity_safe_limit`（Engy 实测输入上限 × 0.95） |
+| 进入主实验的条件 | 该组合**所有候选**都 eligible 的题，才进入 `normal_context_primary_set`，参与分数、成本、延迟、胜负平、bootstrap 的比较 |
+| 容量超限 | 不计错、不记 0 分；记为 `capacity_ineligible`，整题从该组合主统计中排除，并移入 `long_context_pool` |
+| 每个组合要报告 | `total_sampled_tasks`、`normal_context_tasks`、`capacity_excluded_tasks`；比较只基于 `normal_context_tasks` |
+| 长上下文池 | 保留原 task_type / execution_mode / capability_need；按 task_type、execution_mode、长度区间、可装下的模型分组统计；当前不专门构造 1M token 的题，样本明显不足时再补 |
+| 长上下文选型 | 只比较装得下的模型（超过约 28 万基本只剩 DS 0731 与 Kimi），选型规则与主实验相同（1 分容差 + 成本低 20%） |
+| agentic 运行中超限 | 第一次请求都装得下、但轨迹变长后 sticky 模型超出窗口，记为 `runtime_context_overflow`，单独统计，不算普通质量失败；不设计中途换模型 |
+| 新增逐题字段 | `estimated_input_tokens`、`estimated_tokens_source`、`context_bucket`、各候选的 `capacity_eligible` / `model_input_limit` / `capacity_safe_limit`、`exclusion_reason`、`moved_to_long_context_pool`、`result_status`、`runtime_context_overflow` |
+
+**各组合的共同安全上限**（取候选中最小的安全上限）：
+
+| 组合 | 候选 | 共同安全上限 |
+|---|---|---|
+| math + direct | DS 4.1、Kimi、GLM-5.3-Flash | 217,907 |
+| coding + direct | DS 4.1、Kimi、GLM-5.3、GLM-5.3-Flash | 217,907 |
+| reasoning_planning + direct | Kimi、DS 4.1、GLM-5.3 | 249,037 |
+| general_qa + direct | Kimi、DS 4.1、GLM-5.3-Flash | 217,907 |
+| writing_language + direct | Kimi、GLM-5.3、DS 4.1、GLM-5.3-Flash | 217,907 |
+| research_analysis + direct | DS 4.1、Kimi、GLM-5.3-Flash | 217,907 |
+| workflow_operation + agentic | DS 4.1、GLM-5.3、GLM-5.3-Flash（Kimi 可选） | 217,907（首条请求） |
+| coding + agentic | GLM-5.3、Kimi、DS 4.1、GLM-5.3-Flash | 217,907（首条请求）；运行中超限单独记录 |
+
+预期影响：计划中的 direct benchmark 单题一般只有几千 token，几乎不会被排除；DeepSWE 的首条请求也很短，但长轨迹会在运行中超限（按榜单逐轮数据推算，GLM-5.3-Flash 约 13%、DS 约 12%、GLM-5.3 约 4%），这部分必须按 `runtime_context_overflow` 单独报告。
+
 **扩样与停止（各 direct 组合通用）**：第一轮 20 题。若最便宜的候选与最高分之差的 95% 置信区间与"±1 分"区间有重叠，或差距在 5 分以内，则扩到 50 题；若差距超过 10 分且置信区间不跨 0，则停止。agentic 第一轮 10–15 题，差距接近时再扩。
 
 ## 2. 各组合的实验

@@ -2,6 +2,8 @@
 
 状态定义：**RESOLVED** 已有证据足以确定；**SCREENING_NEEDED** 知道大致候选，需小样本验证；**EVIDENCE_MISSING** 几乎没有可比证据；**BENCHMARK_MISSING** 缺合适的 benchmark 或评分方式。
 
+**以下状态都是针对 normal context 的比较**：只在该组合所有候选都装得下的题上比较模型能力（规则见 `STAGE2_CONTEXT_POLICY.md`）。长上下文单独列在文末。
+
 **没有任何组合是 RESOLVED**：公开证据都只是 B 级（厂商 API 全精度、不同 harness），本项目在 Engy 上没有任何一组"同一 benchmark、同一设置、多个候选"的 A 级对比。
 
 | 组合 | 状态 | 最值得测的候选 | 依据（B 级） | 缺什么 |
@@ -28,7 +30,9 @@
 | qwen3.6-35b-a3b | **不测**：AutomationBench 5.2、TB4.0 为 0、HLE 22.2 |
 | qwen3.8-27b | 暂不测；它自报 LiveCodeBench 90.3，若 coding + direct 结果接近再考虑加入 |
 
-## 长上下文（只记录，不定规则）
+## 长上下文（单独的实验线，只记录，不定规则）
+
+长上下文不是 task_type，而是请求属性。Stage 2B 跑 normal context 实验时，任何因容量被排除的题都移入 `long_context_pool`，按 task_type、execution_mode、长度区间、可装下的模型分组，之后单独比较。当前各模型的安全上限（Engy 实测 × 0.95）：GLM-5.3-Flash 217,907、DS 4.1 249,037、GLM-5.3 280,166、DS 0731 874,547、Kimi 约 996,147。
 
 | 证据 | 内容 |
 |---|---|
